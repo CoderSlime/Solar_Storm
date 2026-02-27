@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+ <head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1" name="viewport"/>
+  <title>
+   Sat Shield | Secure Login
+  </title>
+  <!-- Brand Typography: Poppins -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+  <!-- Bootstrap 5 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+   <!-- Font Awesome 6 -->
+   <link crossorigin="anonymous" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-k5hS5QxO5pQH6qv3xYc1r6l0wrQfPqNwQWQ7M2QwqkX6QZQZsM3yKxOqTjW6yQzNnqfU1YwQmIuQ8Yz1D4iE3g==" referrerpolicy="no-referrer" rel="stylesheet"/>
+   <!-- Global Theme CSS -->
+   <link href="style.css" rel="stylesheet"/>
+   <!-- Page-specific CSS -->
+   <link href="login_page.css" rel="stylesheet"/>
+  </link>
+ </head>
+ <body class="d-flex flex-column min-vh-100">
+  <!-- Common Header for Login Page (no sidebar on login) -->
+  <header class="navbar navbar-expand-lg navbar-dark" style="background-color:#FF7F50;">
+   <div class="container-fluid">
+    <a aria-label="Sat Shield Home" class="navbar-brand d-flex align-items-center" href="#">
+     <img alt="Sat Shield" class="me-2" onerror="this.onerror=null;this.src='https://picsum.photos/seed/satshield/28/28';" src="/project/68e3a1f6137cf9ada72deea3/logos/logo_e99d62d9-1254-45c9-b289-f3ed99f102dd.png" style="height:28px;"/>
+     <span>
+      Sat Shield
+     </span>
+    </a>
+    <button aria-controls="loginHeaderNav" aria-expanded="false" aria-label="Toggle navigation" class="navbar-toggler" data-bs-target="#loginHeaderNav" data-bs-toggle="collapse" type="button">
+     <span class="navbar-toggler-icon">
+     </span>
+    </button>
+    <div class="collapse navbar-collapse" id="loginHeaderNav">
+     <ul class="navbar-nav ms-auto">
+      <li class="nav-item">
+       <a class="nav-link" href="#help">
+        <i aria-hidden="true" class="fa fa-circle-info me-1">
+        </i>
+        <span>
+         Help
+        </span>
+       </a>
+      </li>
+     </ul>
+    </div>
+   </div>
+  </header>
+  <!-- Main Content: Login Form -->
+  <main class="flex-grow-1 d-flex align-items-center py-4">
+   <div class="container">
+    <!-- System feedback area (info) -->
+    <div class="alert alert-info mb-4" role="alert">
+     Use the demo credentials listed below to test role-based login. Your session will redirect to the main dashboard.
+    </div>
+    <div class="d-flex justify-content-center">
+     <div aria-label="Login form" class="login-form-container w-100" role="region">
+      <div class="text-center mb-3">
+       <img alt="Sat Shield Logo" class="rounded" onerror="this.onerror=null;this.src='https://picsum.photos/seed/satshieldlogo/48/48';" src="/project/68e3a1f6137cf9ada72deea3/logos/logo_e99d62d9-1254-45c9-b289-f3ed99f102dd.png" style="height:48px;"/>
+       <h1 class="mt-3 page-title">
+        Secure Access
+       </h1>
+       <p class="text-muted mb-0">
+        Sign in to the Sat Shield real-time monitoring dashboard
+       </p>
+      </div>
+      <form aria-label="Authentication form" id="loginForm" novalidate="">
+       <!-- Username Input Group -->
+       <div class="mb-3">
+        <label class="form-label" for="username">
+         Username
+        </label>
+        <input aria-required="true" autocomplete="username" class="form-control" id="username" name="username" placeholder="Enter your username" required="" type="text"/>
+        <div class="invalid-feedback">
+         Please enter your username.
+        </div>
+       </div>
+       <!-- Password Input Group -->
+       <div class="mb-3 position-relative">
+        <label class="form-label" for="password">
+         Password
+        </label>
+        <div class="input-group">
+         <input aria-required="true" autocomplete="current-password" class="form-control" id="password" name="password" placeholder="Enter your password" required="" type="password"/>
+         <button aria-label="Toggle password visibility" class="btn btn-light" data-bs-title="Show/Hide Password" data-bs-toggle="tooltip" id="togglePassword" type="button">
+          <i aria-hidden="true" class="fa fa-eye" id="togglePasswordIcon">
+          </i>
+         </button>
+        </div>
+        <div class="form-text text-warning d-none" id="capsWarning">
+         <i class="fa fa-triangle-exclamation me-1">
+         </i>
+         Caps Lock is ON
+        </div>
+        <div class="invalid-feedback">
+         Please enter your password.
+        </div>
+       </div>
+       <!-- Error Message Display -->
+       <div aria-live="polite" class="alert alert-danger d-none" id="errorMessage" role="alert">
+       </div>
+       <!-- Actions -->
+       <div class="d-flex align-items-center justify-content-between mb-3">
+        <div class="form-check">
+         <input class="form-check-input" id="rememberMe" type="checkbox" value=""/>
+         <label class="form-check-label" for="rememberMe">
+          Remember me
+         </label>
+        </div>
+        <a class="text-info" href="#help">
+         Forgot password?
+        </a>
+       </div>
+       <!-- Submit Button -->
+       <button class="btn btn-primary w-100" id="loginButton" type="submit">
+        <span class="btn-label">
+         Login
+        </span>
+       </button>
+       <!-- Privacy note -->
+       <p class="form-text mt-3 mb-0">
+        By signing in you acknowledge our
+        <a href="#privacy">
+         privacy policy
+        </a>
+        .
+       </p>
+      </form>
+     </div>
+    </div>
+    <!-- Demo Credentials: role-based routing info -->
+    <div aria-label="Demo login credentials" class="card mt-4" id="loginHelperCard">
+     <div class="card-header d-flex align-items-center justify-content-between">
+      <span class="fw-semibold">
+       Demo Accounts
+      </span>
+      <span class="badge-soft info">
+       <i class="fa fa-circle-info me-1">
+       </i>
+       Use for testing
+      </span>
+     </div>
+     <div class="card-body">
+      <p class="text-muted mb-3">
+       The following usernames and passwords will redirect you to the main dashboard with role-specific context.
+      </p>
+      <div class="table-responsive">
+       <table class="table table-theme mb-0">
+        <thead>
+         <tr>
+          <th>
+           Role
+          </th>
+          <th>
+           Username
+          </th>
+          <th>
+           Password
+          </th>
+          <th>
+           Redirect
+          </th>
+         </tr>
+        </thead>
+        <tbody>
+         <tr>
+          <td>
+           <span class="badge-soft success">
+            Admin
+           </span>
+          </td>
+          <td>
+           <code>
+            admin
+           </code>
+          </td>
+          <td>
+           <code>
+            Admin@123
+           </code>
+          </td>
+          <td>
+           <a class="text-info" href="./main_dashboard.html?role=admin">
+            main_dashboard
+           </a>
+          </td>
+         </tr>
+         <tr>
+          <td>
+           <span class="badge-soft info">
+            Operator
+           </span>
+          </td>
+          <td>
+           <code>
+            operator
+           </code>
+          </td>
+          <td>
+           <code>
+            Op@12345
+           </code>
+          </td>
+          <td>
+           <a class="text-info" href="./main_dashboard.html?role=operator">
+            main_dashboard
+           </a>
+          </td>
+         </tr>
+         <tr>
+          <td>
+           <span class="badge-soft primary">
+            Analyst
+           </span>
+          </td>
+          <td>
+           <code>
+            analyst
+           </code>
+          </td>
+          <td>
+           <code>
+            Analyst@123
+           </code>
+          </td>
+          <td>
+           <a class="text-info" href="./main_dashboard.html?role=analyst">
+            main_dashboard
+           </a>
+          </td>
+         </tr>
+         <tr>
+          <td>
+           <span class="badge-soft secondary">
+            Viewer
+           </span>
+          </td>
+          <td>
+           <code>
+            viewer
+           </code>
+          </td>
+          <td>
+           <code>
+            View@123
+           </code>
+          </td>
+          <td>
+           <a class="text-info" href="./main_dashboard.html?role=viewer">
+            main_dashboard
+           </a>
+          </td>
+         </tr>
+         <tr>
+          <td>
+           <span class="badge-soft warning">
+            Guest
+           </span>
+          </td>
+          <td>
+           <code>
+            guest
+           </code>
+          </td>
+          <td>
+           <code>
+            Guest@123
+           </code>
+          </td>
+          <td>
+           <a class="text-info" href="./main_dashboard.html?role=guest">
+            main_dashboard
+           </a>
+          </td>
+         </tr>
+        </tbody>
+       </table>
+      </div>
+      <small class="text-muted">
+       Tip: Press Enter to submit the form quickly.
+      </small>
+     </div>
+    </div>
+   </div>
+  </main>
+  <!-- Common Footer for Login Page -->
+  <footer class="border-top mt-auto py-2" style="background:#f8f9fa;">
+   <div class="container d-flex justify-content-between align-items-center">
+    <div class="d-flex align-items-center">
+     <img alt="Sat Shield" class="me-2" onerror="this.onerror=null;this.src='https://picsum.photos/seed/satshieldfooter/20/20';" src="/project/68e3a1f6137cf9ada72deea3/logos/logo_e99d62d9-1254-45c9-b289-f3ed99f102dd.png" style="height:20px;"/>
+     <span class="small text-muted">
+      © Sat Shield
+     </span>
+    </div>
+    <div class="small">
+     <a class="me-3" href="#terms">
+      Terms
+     </a>
+     <a href="#privacy">
+      Privacy
+     </a>
+    </div>
+   </div>
+  </footer>
+  <!-- JS: Bootstrap Bundle -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js">
+  </script>
+  <!-- JS: SweetAlert2 -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11">
+  </script>
+  <!-- JS: ApexCharts (loaded for consistency; not used on login page) -->
+  <script src="https://cdn.jsdelivr.net/npm/apexcharts">
+  </script>
+  <!-- App JS: shared login + dashboard logic -->
+  <script src="app.js"></script>
+ </body>
+</html>

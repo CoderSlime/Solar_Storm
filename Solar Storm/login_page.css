@@ -1,0 +1,44 @@
+/* Login Page Specific Styles (login_page.css) */
+/* Use brand typography */
+body {
+    font-family: "Poppins", var(--font-sans)
+    }
+/* Strengthen visual hierarchy for page title */
+.page-title {
+    font-weight: 700
+    }
+/* Login helper card spacing */
+#loginHelperCard .badge-soft {
+    font-size: var(--font-size-sm)
+    }
+/* Button and input fine-tuning for login page */
+#loginForm .btn-primary {
+    min-height: 40px
+    }
+#loginForm .form-label {
+    font-weight: 600
+    }
+/* Password toggle button alignment */
+#togglePassword {
+    border-left: 0
+    }
+#togglePassword i {
+    color: var(--text-muted)
+    }
+#togglePassword:hover i {
+    color: var(--text)
+    }
+/* Caps lock warning style */
+#capsWarning {
+    margin-top: 6px
+    }
+/* Logo alignment within login form */
+.login-form-container img {
+    image-rendering: auto
+    }
+/* Responsive adjustments */
+@media (max-width: 575.98px) {
+    .login-form-container {
+        padding: var(--space-4)
+        }
+    }

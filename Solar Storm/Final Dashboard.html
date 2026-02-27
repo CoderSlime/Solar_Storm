@@ -1,0 +1,1460 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>s
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Sat Shield Main Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;300;400;500;600;700&display=swap" rel="stylesheet"/>
+  <link crossorigin="anonymous" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" rel="stylesheet"/>
+  <link crossorigin="anonymous" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" referrerpolicy="no-referrer" rel="stylesheet"/>
+
+  <style>
+    /* ─── BASE ─── */
+    *, *::before, *::after { box-sizing: border-box; }
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: #f0f2f5;
+      color: #1a1a2e;
+      margin: 0;
+    }
+
+    /* ─── SYSTEM ALERT BANNER ─── */
+    .system-alert-banner {
+      background: #dc2626;
+      color: #fff;
+      padding: 8px 20px;
+      font-size: 0.82rem;
+      font-weight: 500;
+      z-index: 9999;
+      position: sticky;
+      top: 0;
+    }
+    .system-alert-banner.visually-hidden { display: none; }
+
+    /* ─── NAVBAR ─── */
+    .navbar { padding: 0.5rem 1.2rem; }
+
+    /* ─── SIDEBAR ─── */
+    .sidebar-exec .nav-link { color: #333; border-radius: .25rem; padding: 0.45rem 0.75rem; font-size: 0.875rem; }
+    .sidebar-exec .nav-link:hover { background-color: rgba(0,0,255,0.08); color: #0000FF; }
+    .sidebar-exec .nav-link.active { background-color: rgba(255,127,80,0.15); color: #FF7F50; }
+    .sidebar-exec .submenu .nav-link { padding-left: 2rem; }
+
+    /* ─── METRIC CARDS ─── */
+    .metric-card {
+      background: #fff;
+      border-radius: 12px;
+      padding: 18px 20px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+      border-left: 4px solid #FF7F50;
+      transition: transform 0.2s;
+    }
+    .metric-card:hover { transform: translateY(-2px); }
+    .metric-title { font-size: 0.72rem; font-weight: 600; color: #888; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 6px; }
+    .metric-value { font-size: 1.7rem; font-weight: 700; color: #1a1a2e; }
+
+    .grid.auto-fit-lg {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+    }
+
+    /* ─── BADGES ─── */
+    .badge-soft { font-size: 0.68rem; font-weight: 600; padding: 3px 9px; border-radius: 20px; display: inline-flex; align-items: center; }
+    .badge-soft.error { background: rgba(220,38,38,0.12); color: #dc2626; }
+    .badge-soft.warning { background: rgba(245,158,11,0.12); color: #d97706; }
+    .badge-soft.primary { background: rgba(59,130,246,0.12); color: #2563eb; }
+    .badge-soft.success { background: rgba(22,163,74,0.12); color: #16a34a; }
+    .badge-soft.info { background: rgba(6,182,212,0.12); color: #0891b2; }
+
+    /* ─── APP CARDS ─── */
+    .app-card {
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+      overflow: hidden;
+    }
+    .app-card .card-header {
+      background: #fafafa;
+      border-bottom: 1px solid #eee;
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .app-card .card-body { padding: 14px 16px; }
+    .widget-title { font-size: 0.82rem; font-weight: 600; color: #1a1a2e; }
+
+    .chart-container.skeleton {
+      height: 120px;
+      background: linear-gradient(90deg, #f0f0f0 25%, #e8e8e8 50%, #f0f0f0 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.5s infinite;
+      border-radius: 8px;
+    }
+    @keyframes shimmer {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 16px;
+    }
+
+    /* ─── TABLE ─── */
+    .table-theme thead th { background: #f8f8f8; font-size: 0.75rem; font-weight: 600; color: #555; text-transform: uppercase; letter-spacing: 0.06em; border-bottom: 2px solid #eee; }
+    .table-theme td { font-size: 0.82rem; vertical-align: middle; }
+
+    /* ─── VIEW SWITCHER ─── */
+    .view-switcher { display: flex; background: #fff; border-radius: 8px; padding: 3px; box-shadow: 0 1px 6px rgba(0,0,0,0.08); }
+    .view-switcher .option { padding: 5px 11px; border-radius: 6px; cursor: pointer; color: #888; font-size: 0.82rem; transition: all 0.15s; }
+    .view-switcher .option.active { background: #FF7F50; color: #fff; }
+
+    /* ─── BREADCRUMB ─── */
+    .breadcrumb { margin: 0; padding: 0; background: none; list-style: none; display: flex; align-items: center; gap: 6px; font-size: 0.8rem; }
+    .breadcrumb-item a { color: #FF7F50; text-decoration: none; }
+    .breadcrumb-item + .breadcrumb-item::before { content: '/'; color: #bbb; }
+
+    /* ════════════════════════════════════════
+       SOLAR MAP SECTION — merged from map code
+    ════════════════════════════════════════ */
+    .solar-section {
+      background: #ffffff;
+      border-radius: 16px;
+      padding: 24px;
+      margin-top: 28px;
+      border: 2px solid #dc2626;
+      box-shadow: 0 0 0 0 rgba(220,38,38,0.4);
+      animation: criticalPulse 2s infinite;
+    }
+    @keyframes criticalPulse {
+      0%   { box-shadow: 0 0 0 0 rgba(220,38,38,0.35), 0 4px 24px rgba(184,168,136,0.2); }
+      50%  { box-shadow: 0 0 0 8px rgba(220,38,38,0.0), 0 4px 24px rgba(220,38,38,0.15); }
+      100% { box-shadow: 0 0 0 0 rgba(220,38,38,0.35), 0 4px 24px rgba(184,168,136,0.2); }
+    }
+    .solar-section-title {
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.28em;
+      color: #7a3a1a;
+      text-transform: uppercase;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .solar-dashboard {
+      display: flex;
+      gap: 18px;
+      align-items: flex-start;
+      width: 100%;
+    }
+    .map-panel {
+      flex: 3;
+      background: #ffffff;
+      border: 1.5px solid #ddd;
+      border-radius: 12px;
+      padding: 16px;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.10);
+    }
+    .panel-title-map {
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      color: #444;
+      text-transform: uppercase;
+      border-bottom: 1px solid #ddd;
+      padding-bottom: 6px;
+      margin-bottom: 10px;
+      font-family: 'Courier New', monospace;
+      font-weight: 700;
+    }
+    .map-container {
+      position: relative;
+      width: 100%;
+      padding-bottom: 54%;
+      height: 0;
+    }
+    .map-container > * {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+    }
+    #heatCanvas { z-index: 1; border-radius: 6px; pointer-events: none; }
+    #map-svg { z-index: 2; display: block; }
+
+    .country { stroke: rgba(80,80,80,0.75); stroke-width: 0.7px; cursor: pointer; fill-opacity: 1; transition: stroke-width 0.15s; }
+    .country:hover { stroke-width: 1.8px; stroke: #222; }
+    .graticule { fill: none; stroke: rgba(180,180,180,0.55); stroke-width: 0.4px; }
+    .sphere { fill: #ffffff; }
+    .oval-border { fill: none; stroke: #888; stroke-width: 1.5px; opacity: 1; }
+
+    /* Storm annotation label on the map */
+    .storm-label {
+      font-family: 'Courier New', monospace;
+      font-size: 11px;
+      font-weight: bold;
+      fill: #fff;
+      text-shadow: 0 0 6px #ff0000;
+      pointer-events: none;
+    }
+    .storm-label-bg {
+      fill: rgba(180,0,0,0.72);
+      rx: 4px;
+    }
+    /* Pulsing storm markers */
+    @keyframes stormRingPulse {
+      0%   { opacity: 0.9; r: 14; }
+      50%  { opacity: 0.3; r: 22; }
+      100% { opacity: 0.9; r: 14; }
+    }
+    .storm-marker circle:first-child {
+      animation: stormRingPulse 1.8s ease-in-out infinite;
+    }
+
+    #tooltip {
+      position: fixed;
+      background: rgba(245,240,232,0.96);
+      border: 1px solid #a08060;
+      border-radius: 4px;
+      padding: 5px 11px;
+      font-size: 0.68rem;
+      color: #4a2e10;
+      pointer-events: none;
+      display: none;
+      z-index: 300;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.13);
+      font-family: 'Courier New', monospace;
+    }
+
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px 18px;
+      margin-top: 12px;
+      justify-content: center;
+    }
+    .legend-item { display: flex; align-items: center; gap: 6px; font-size: 0.62rem; letter-spacing: 0.08em; color: #333; font-family: 'Courier New', monospace; }
+    .legend-swatch { width: 13px; height: 13px; border-radius: 3px; border: 1px solid rgba(0,0,0,0.18); }
+
+    .graph-panel {
+      flex: 1;
+      min-width: 240px;
+      background: #000;
+      border: 1.5px solid #333;
+      border-radius: 8px;
+      padding: 14px 12px 12px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+    }
+    .panel-title-graph {
+      font-size: 0.62rem;
+      letter-spacing: 0.18em;
+      color: #aaa;
+      border-bottom: 1px solid #333;
+      padding-bottom: 5px;
+      margin-bottom: 10px;
+      text-transform: uppercase;
+      font-family: 'Courier New', monospace;
+      text-align: center;
+    }
+
+    @media (max-width: 768px) {
+      .solar-dashboard { flex-direction: column; }
+      .graph-panel { min-width: unset; width: 100%; }
+    }
+
+    /* ─── FOOTER ─── */
+    footer a { color: #FF7F50; text-decoration: none; font-size: 0.82rem; }
+    footer a:hover { text-decoration: underline; }
+    .container-max { max-width: 100%; }
+  </style>
+</head>
+<body>
+
+<!-- System Alert Banner -->
+<div aria-atomic="true" aria-live="assertive" class="system-alert-banner" id="systemAlertBanner" role="alert">
+  <div class="container-fluid d-flex align-items-center justify-content-between">
+    <div class="d-flex align-items-center gap-2">
+      <i class="fa-solid fa-triangle-exclamation me-1"></i>
+      <strong id="systemAlertStatus">CRITICAL</strong>
+      <span class="ms-2" id="systemAlertMessage">Bz southward below -10 nT. Increased geomagnetic storm risk. Protective actions recommended.</span>
+    </div>
+    <div class="d-flex align-items-center gap-2">
+      <button class="btn btn-light btn-sm" id="acknowledgeAlertBtn" onclick="document.getElementById('systemAlertBanner').classList.add('visually-hidden')">
+        <i class="fa-solid fa-check me-1"></i>Acknowledge
+      </button>
+      <button class="btn btn-outline-light btn-sm" id="viewAlertDetailsBtn">
+        <i class="fa-solid fa-eye me-1"></i>View Details
+      </button>
+    </div>
+  </div>
+</div>
+  </html>
+<!-- Layout -->
+<div class="container-fluid">
+  <div class="row flex-nowrap">
+
+    <!-- Sidebar -->
+    <div class="d-none d-lg-block col-auto p-0">
+      <aside class="bg-light border-end" style="min-width:260px; min-height:calc(100vh - 56px);">
+        <div class="p-3 sidebar-exec">
+          <div class="d-flex align-items-center mb-3">
+            <i class="fa-solid fa-satellite me-2 text-warning" style="font-size:1.4rem;"></i>
+            <span class="fw-bold">Sat Shield</span>
+          </div>
+          <div class="d-flex align-items-center mb-4">
+            <div class="rounded-circle me-2 d-flex align-items-center justify-content-center" style="width:36px;height:36px;background:#FF7F5033;font-size:0.75rem;font-weight:700;color:#FF7F50;">KB</div>
+            <div>
+              <div class="fw-semibold">KAMLESH BELDAR</div>
+              <div class="text-muted small">Executive</div>
+            </div>
+          </div>
+          <nav class="nav flex-column">
+            <a class="nav-link active" href="#exec-summary"><i class="fa fa-briefcase me-2"></i>Executive Summary</a>
+            <a class="nav-link" data-bs-toggle="collapse" href="#exec-kpis" role="button"><i class="fa fa-chart-pie me-2"></i>KPIs &amp; Reports</a>
+            <div class="collapse submenu" id="exec-kpis">
+              <a class="nav-link" href="#kpi-uptime"><i class="fa fa-shield me-2"></i>Reliability (Uptime)</a>
+              <a class="nav-link" href="#kpi-update"><i class="fa fa-rotate me-2"></i>KPI Update</a>
+              <a class="nav-link" href="#kpi-latency"><i class="fa fa-server me-2"></i>Latency</a>
+              <a class="nav-link" href="#kpi-adoption"><i class="fa fa-chart-line me-2"></i>User Adoption</a>
+              <a class="nav-link" href="#kpi-alerts"><i class="fa fa-chart-line me-2"></i>Alerts Accuracy</a>
+            </div>
+            <a class="nav-link" href="#budget"><i class="fa fa-wallet me-2"></i>Budget &amp; Resources</a>
+            <a class="nav-link" href="#risk"><i class="fa fa-triangle-exclamation me-2"></i>Risk Register</a>
+            <a class="nav-link" href="#timeline"><i class="fa fa-calendar-alt me-2"></i>Project Timeline</a>
+            <a class="nav-link" href="#solar-flux-section"><i class="fa fa-sun me-2"></i>Solar Flux Map</a>
+            <a class="nav-link" href="#help"><i class="fa fa-circle-info me-2"></i>Help</a>
+            <a class="nav-link" href="#settings"><i class="fa fa-gear me-2"></i>Settings</a>
+          </nav>
+        </div>
+      </aside>
+    </div>
+
+    <!-- Main -->
+    <main class="col p-3 p-lg-4">
+
+      <!-- Breadcrumb + View Switch -->
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <nav aria-label="breadcrumb" class="breadcrumb">
+          <span class="breadcrumb-item"><a href="#">Login</a></span>
+          <span class="breadcrumb-item active" aria-current="page">Main Dashboard</span>
+        </nav>
+        <div class="view-switcher d-none d-md-inline-flex" role="group">
+          <div class="option active" id="viewGridBtn"><i class="fa-solid fa-grip"></i></div>
+          <div class="option" id="viewTableBtn"><i class="fa-solid fa-table"></i></div>
+          <div class="option" id="viewTilesBtn"><i class="fa-solid fa-border-all"></i></div>
+        </div>
+      </div>
+
+      <!-- Executive Summary Cards -->
+      <section class="container-max mb-4" id="exec-summary">
+        <div class="grid auto-fit-lg">
+          <div class="metric-card">
+            <div class="metric-title">System State</div>
+            <div class="d-flex align-items-center justify-content-between">
+              <div class="metric-value">CRITICAL</div>
+              <span class="badge-soft error">Geomagnetic Risk</span>
+            </div>
+            <small class="text-muted">Derived from highest threat parameter</small>
+          </div>
+          <div class="metric-card">
+            <div class="metric-title">Bz Now (nT)</div>
+            <div class="d-flex align-items-center justify-content-between">
+              <div class="metric-value text-danger" id="bzNowValue">-12.4</div>
+              <span class="badge-soft error" id="bzStatusBadge"><i class="fa-solid fa-circle me-1"></i>DANGER</span>
+            </div>
+            <small class="text-muted">Threshold: danger at ≤ -10 nT</small>
+          </div>
+          <div class="metric-card">
+            <div class="metric-title">Solar Wind Speed</div>
+            <div class="d-flex align-items-center justify-content-between">
+              <div class="metric-value" id="swsNowValue">622 km/s</div>
+              <span class="badge-soft warning" id="swsStatusBadge"><i class="fa-solid fa-circle me-1"></i>Elevated</span>
+            </div>
+            <small class="text-muted">Normal &lt; 500 | Elevated 500-700 | High &gt; 700</small>
+          </div>
+          <div class="metric-card">
+            <div class="metric-title">Radiation Storm (S-Scale)</div>
+            <div class="d-flex align-items-center justify-content-between">
+              <div class="metric-value" id="sScaleValue">S2</div>
+              <span class="badge-soft error"><i class="fa-solid fa-radiation me-1"></i>Proton Flux</span>
+            </div>
+            <small class="text-muted">GOES derived</small>
+          </div>
+        </div>
+      </section>
+
+      <!-- Dashboard Panels -->
+      <section class="container-max">
+        <div class="card-grid" id="dashboardGrid">
+          <!-- Solar Magnetic Field (Bz) -->
+          <article class="app-card" id="panel-bz">
+            <div class="card-header">
+              <div class="d-flex align-items-center gap-2">
+                <i class="fa-solid fa-magnet text-info"></i>
+                <span class="widget-title">Solar Magnetic Field (Bz)</span>
+                <span class="badge-soft error">DANGER</span>
+              </div>
+              <div class="btn-group btn-group-sm" role="group">
+                <button class="btn btn-light active" data-range="1h">1h</button>
+                <button class="btn btn-light" data-range="6h">6h</button>
+                <button class="btn btn-light" data-range="24h">24h</button>
+                <button class="btn btn-light" data-range="72h">72h</button>
+              </div>
+            </div>
+            <div class="card-body">
+              <div class="d-flex align-items-center justify-content-between mb-2">
+                <div><div class="text-muted small">Current</div><div class="h4 mb-0"><span>-12.4</span> <span class="text-muted">nT</span></div></div>
+                <div><div class="text-muted small">Danger Duration</div><div class="h5 mb-0">00:12:34</div></div>
+              </div>
+              <div class="chart-container" style="height:150px;position:relative;"><canvas id="panelBzChart"></canvas></div>
+              <small class="text-muted d-block mt-2">Shaded red area indicates southward (danger) | Critical threshold line at -10 nT</small>
+            </div>
+          </article>
+
+          <!-- Solar Wind Speed -->
+          <article class="app-card" id="panel-solar-wind-speed">
+            <div class="card-header">
+              <div class="d-flex align-items-center gap-2">
+                <i class="fa-solid fa-wind text-info"></i>
+                <span class="widget-title">Solar Wind Speed</span>
+                <span class="badge-soft warning">Elevated</span>
+              </div>
+              <div class="btn-group btn-group-sm">
+                <button class="btn btn-light active" data-range="6h">6h</button>
+                <button class="btn btn-light" data-range="24h">24h</button>
+                <button class="btn btn-light" data-range="72h">72h</button>
+              </div>
+            </div>
+            <div class="card-body">
+              <div class="d-flex align-items-center justify-content-between mb-2">
+                <div><div class="text-muted small">Current</div><div class="h4 mb-0">622 <span class="text-muted">km/s</span></div></div>
+                <span class="badge-soft info"><i class="fa-solid fa-sliders me-1"></i>Thresholds: 500/700</span>
+              </div>
+              <div class="chart-container" style="height:150px;position:relative;"><canvas id="panelWindChart"></canvas></div>
+              <small class="text-muted d-block mt-2">Background bands: Normal &lt; 500, Elevated 500-700, High &gt; 700</small>
+            </div>
+          </article>
+
+          <!-- Solar Wind Density -->
+          <article class="app-card" id="panel-solar-wind-density">
+            <div class="card-header">
+              <div class="d-flex align-items-center gap-2">
+                <i class="fa-solid fa-water text-info"></i>
+                <span class="widget-title">Solar Wind Density</span>
+                <span class="badge-soft primary">Normal</span>
+              </div>
+              <div class="btn-group btn-group-sm">
+                <button class="btn btn-light active">6h</button>
+                <button class="btn btn-light">24h</button>
+              </div>
+            </div>
+            <div class="card-body">
+              <div class="d-flex align-items-center justify-content-between mb-2">
+                <div><div class="text-muted small">Current</div><div class="h4 mb-0">12.1 <span class="text-muted">protons/cm³</span></div></div>
+                <span class="badge-soft success"><i class="fa-solid fa-bell me-1"></i>CME Arrival Monitor</span>
+              </div>
+              <div class="chart-container" style="height:150px;position:relative;"><canvas id="panelDensityChart"></canvas></div>
+            </div>
+          </article>
+
+          <!-- Radiation Hazard -->
+          <article class="app-card" id="panel-proton-flux">
+            <div class="card-header">
+              <div class="d-flex align-items-center gap-2">
+                <i class="fa-solid fa-radiation text-warning"></i>
+                <span class="widget-title">Radiation Hazard (Proton Flux)</span>
+                <span class="badge-soft error">S2</span>
+              </div>
+              <div><span class="text-muted small">Live Flux:</span> <strong>12.5</strong> <span class="text-muted small">pfu</span></div>
+            </div>
+            <div class="card-body">
+              <div class="d-flex align-items-center justify-content-between mb-2">
+                <div><div class="text-muted small">Above S1 for</div><div class="h5 mb-0">00:34:10</div></div>
+                <div class="text-muted small">NOAA S-Scale</div>
+              </div>
+              <div class="chart-container" style="height:150px;position:relative;"><canvas id="panelProtonChart"></canvas></div>
+            </div>
+          </article>
+
+          <!-- Solar X-ray Flux -->
+          <article class="app-card" id="panel-xray-flux">
+            <div class="card-header">
+              <div class="d-flex align-items-center gap-2">
+                <i class="fa-solid fa-sun text-warning"></i>
+                <span class="widget-title">Solar X-ray Flux</span>
+              </div>
+              <div><span class="text-muted small">Current Class:</span> <span class="badge-soft warning">M</span></div>
+            </div>
+            <div class="card-body">
+              <div class="chart-container" style="height:150px;position:relative;"><canvas id="panelXrayChart"></canvas></div>
+              <small class="text-muted d-block mt-2">Logarithmic scale | Threshold lines for C, M, X-class flares</small>
+            </div>
+          </article>
+
+          <!-- Actionable Advice -->
+          <article class="app-card" id="panel-actionable-advice">
+            <div class="card-header">
+              <div class="d-flex align-items-center gap-2">
+                <i class="fa-solid fa-list-check text-success"></i>
+                <span class="widget-title">Actionable Advice</span>
+              </div>
+            </div>
+            <div class="card-body">
+              <p class="mb-2">Based on current highest threat level across parameters:</p>
+              <div class="p-3 rounded border" style="background:rgba(245,158,11,0.07);border-color:rgba(245,158,11,0.3)!important;">
+                <div class="text-strong" style="font-size:0.85rem;line-height:1.6;">
+                  Initiate protective operations for sensitive payloads; defer non-critical burns and high-drag operations for LEO assets; increase ground contact monitoring; prepare safe-mode criteria if Bz ≤ -10 nT persists beyond 30 minutes.
+                </div>
+              </div>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <!-- Recent Alerts -->
+      <section class="container-max mt-4" id="recent-alerts">
+        <div class="card" style="border-radius:12px;box-shadow:0 2px 12px rgba(0,0,0,0.07);">
+          <div class="card-header bg-white" style="border-radius:12px 12px 0 0;">
+            <div class="d-flex align-items-center justify-content-between w-100">
+              <div class="d-flex align-items-center gap-2">
+                <i class="fa-solid fa-clock-rotate-left text-primary"></i>
+                <span class="widget-title">Recent Alerts &amp; Events</span>
+              </div>
+              <div class="d-flex align-items-center gap-2">
+                <input class="form-control form-control-sm" placeholder="Search alerts" style="max-width:220px;" type="text"/>
+                <select class="form-select form-select-sm" style="max-width:160px;">
+                  <option>All Severities</option>
+                  <option>Critical</option>
+                  <option>High</option>
+                  <option>Medium</option>
+                  <option>Low</option>
+                </select>
+              </div>
+            </div>
+          </div>
+          <div class="card-body p-0">
+            <div class="table-responsive">
+              <table class="table table-theme mb-0 table-hover">
+                <thead>
+                  <tr>
+                    <th>Time</th><th>Source</th><th>Type</th><th>Severity</th><th>Description</th><th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>14:22 UTC</td><td>GOES-18</td><td>Bz Alert</td><td><span class="badge-soft error">CRITICAL</span></td>
+                    <td>Bz dropped to -12.4 nT sustained &gt;10 min</td>
+                    <td><button class="btn btn-sm btn-outline-secondary">View</button></td>
+                  </tr>
+                  <tr>
+                    <td>13:58 UTC</td><td>ACE</td><td>Solar Wind</td><td><span class="badge-soft warning">HIGH</span></td>
+                    <td>Solar wind speed exceeded 600 km/s</td>
+                    <td><button class="btn btn-sm btn-outline-secondary">View</button></td>
+                  </tr>
+                  <tr>
+                    <td>12:41 UTC</td><td>NOAA</td><td>Radiation Storm</td><td><span class="badge-soft error">HIGH</span></td>
+                    <td>S2 radiation storm detected, proton flux elevated</td>
+                    <td><button class="btn btn-sm btn-outline-secondary">View</button></td>
+                  </tr>
+                  <tr>
+                    <td>11:05 UTC</td><td>GOES-16</td><td>X-ray Flux</td><td><span class="badge-soft warning">MEDIUM</span></td>
+                    <td>M-class flare detected in AR 3542</td>
+                    <td><button class="btn btn-sm btn-outline-secondary">View</button></td>
+                  </tr>
+                  <tr>
+                    <td>09:30 UTC</td><td>SDO</td><td>CME</td><td><span class="badge-soft primary">LOW</span></td>
+                    <td>Partial halo CME detected, arrival in ~36 hrs</td>
+                    <td><button class="btn btn-sm btn-outline-secondary">View</button></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div class="card-footer bg-white d-flex align-items-center justify-content-between" style="border-radius:0 0 12px 12px;">
+            <div class="text-muted small">Showing 1-5 of 10</div>
+            <nav>
+              <ul class="pagination pagination-sm mb-0">
+                <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                <li class="page-item"><a class="page-link" href="#">2</a></li>
+              </ul>
+            </nav>
+          </div>
+        </div>
+      </section>
+
+      <!-- ════════════════════════════════════════════════════ -->
+      <!-- SOLAR FLUX MAP SECTION — placed below exec summary  -->
+      <!-- ════════════════════════════════════════════════════ -->
+      <section class="solar-section" id="solar-flux-section">
+        <div class="solar-section-title">
+          <i class="fa-solid fa-globe" style="color:#dc2626;"></i>
+          Geomagnetic Threat Map — Driven by Live Dashboard Values
+          <span style="margin-left:auto;display:flex;gap:14px;font-size:0.65rem;letter-spacing:0.05em;">
+            <span style="color:#dc2626;"><i class="fa-solid fa-circle-exclamation me-1"></i>Bz: -12.4 nT CRITICAL</span>
+            <span style="color:#d97706;"><i class="fa-solid fa-wind me-1"></i>Wind: 622 km/s Elevated</span>
+            <span style="color:#dc2626;"><i class="fa-solid fa-radiation me-1"></i>S2 Radiation</span>
+            <span style="color:#d97706;"><i class="fa-solid fa-sun me-1"></i>M-class Flare</span>
+          </span>
+        </div>
+
+        <div class="solar-dashboard">
+          <!-- Map Panel -->
+          <div class="map-panel">
+            <div class="panel-title-map">Geomagnetic Threat Map — Driven by Live Dashboard Values &nbsp;|&nbsp; <span style="color:#dc2626;font-weight:700;">&#9679; CRITICAL ZONE</span></div>
+            <div class="map-container" id="mapContainer">
+              <canvas id="heatCanvas"></canvas>
+              <svg id="map-svg" viewBox="-40 -20 1040 560" preserveAspectRatio="xMidYMid meet"></svg>
+            </div>
+            <div class="legend" id="legend"></div>
+            <!-- Solar flux colorbar -->
+            <div style="display:flex;align-items:center;gap:8px;margin-top:10px;justify-content:center;font-family:'Courier New',monospace;">
+              <span style="font-size:0.6rem;color:#2563eb;font-weight:700;">LOW THREAT</span>
+              <canvas id="colorbarCanvas" width="280" height="14" style="border-radius:3px;border:1px solid #ccc;"></canvas>
+              <span style="font-size:0.6rem;color:#dc2626;font-weight:700;">&#9679; CRITICAL</span>
+            </div>
+            <!-- Threat legend -->
+            <div style="display:flex;gap:14px;justify-content:center;margin-top:8px;font-family:'Courier New',monospace;font-size:0.58rem;flex-wrap:wrap;">
+            <div style="display:flex;gap:14px;justify-content:center;margin-top:8px;font-family:'Courier New',monospace;font-size:0.58rem;flex-wrap:wrap;">
+              <span style="display:flex;align-items:center;gap:4px;"><span style="width:10px;height:10px;border-radius:2px;background:#4ade80;display:inline-block;"></span>Low Threat</span>
+              <span style="display:flex;align-items:center;gap:4px;"><span style="width:10px;height:10px;border-radius:2px;background:#16a34a;display:inline-block;"></span>Low Threat</span>
+              <span style="display:flex;align-items:center;gap:4px;"><span style="width:10px;height:10px;border-radius:2px;background:#fbbf24;display:inline-block;"></span>Normal</span>
+              <span style="display:flex;align-items:center;gap:4px;"><span style="width:10px;height:10px;border-radius:2px;background:#f97316;display:inline-block;"></span>Normal</span>
+              <span style="display:flex;align-items:center;gap:4px;"><span style="width:10px;height:10px;border-radius:2px;background:#dc2626;display:inline-block;border:1px solid #ff0000;"></span>Critical Threat</span>
+            </div>
+          </div>
+
+          <!-- Graph Panel -->
+          <div class="graph-panel">
+            <div class="panel-title-graph">Geomagnetic Threat<br/>Lat × Lon Profile</div>
+            <canvas id="graphCanvas"></canvas>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+</div>
+
+<!-- Footer -->
+<footer class="border-top py-2" style="background:#f8f9fa;margin-top:24px;">
+  <div class="container d-flex justify-content-between align-items-center">
+    <div class="d-flex align-items-center">
+      <i class="fa-solid fa-satellite me-2 text-warning"></i>
+      <span class="small text-muted fw-semibold">Sat Shield</span>
+    </div>
+    <div class="d-flex align-items-center gap-3">
+      <a href="#">Terms</a>
+      <a href="#">Privacy</a>
+      <a class="btn btn-sm" href="#" style="background:#FF7F50;border-color:#FF7F50;color:#fff;">Executive Help</a>
+    </div>
+  </div>
+</footer>
+
+<div id="tooltip"></div>
+
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/topojson/3.0.2/topojson.min.js"></script>
+
+<script>
+// ════════════════════════════════════════
+// VIEW SWITCHER
+// ════════════════════════════════════════
+document.querySelectorAll('.view-switcher .option').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.view-switcher .option').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+  });
+});
+
+// ════════════════════════════════════════
+// CONTINENT COLORS
+// ════════════════════════════════════════
+const CONTINENT_COLORS = {
+  'North America': '#e8001a', 'South America': '#22a845',
+  'Europe': '#2563eb', 'Africa': '#16a34a',
+  'Asia': '#4ade80', 'Australia': '#f59e0b', 'Antarctica': '#a8c4d8',
+};
+const CONTINENT_STROKE = {
+  'North America': '#8b0010', 'South America': '#145c2a',
+  'Europe': '#1d4ed8', 'Africa': '#14532d',
+  'Asia': '#166534', 'Australia': '#b45309', 'Antarctica': '#6a90a8',
+};
+const COUNTRY_CONTINENT = {
+  '124':'North America','840':'North America','484':'North America',
+  '320':'North America','340':'North America','188':'North America',
+  '222':'North America','558':'North America','591':'North America',
+  '192':'North America','332':'North America','388':'North America',
+  '214':'North America','630':'North America','052':'North America',
+  '084':'North America','659':'North America','308':'North America',
+  '662':'North America','670':'North America','780':'North America',
+  '028':'North America','212':'North America',
+  '076':'South America','032':'South America','152':'South America',
+  '170':'South America','218':'South America','600':'South America',
+  '604':'South America','858':'South America','862':'South America',
+  '068':'South America','328':'South America','740':'South America','254':'South America',
+  '276':'Europe','250':'Europe','380':'Europe','724':'Europe',
+  '826':'Europe','528':'Europe','056':'Europe','040':'Europe',
+  '756':'Europe','752':'Europe','578':'Europe','208':'Europe',
+  '246':'Europe','620':'Europe','300':'Europe','616':'Europe',
+  '203':'Europe','703':'Europe','348':'Europe','642':'Europe',
+  '100':'Europe','191':'Europe','705':'Europe','372':'Europe',
+  '428':'Europe','440':'Europe','233':'Europe','498':'Europe',
+  '112':'Europe','804':'Europe','643':'Europe','020':'Europe',
+  '008':'Europe','070':'Europe','807':'Europe','499':'Europe',
+  '688':'Europe','442':'Europe','438':'Europe','470':'Europe',
+  '012':'Africa','818':'Africa','504':'Africa','788':'Africa',
+  '434':'Africa','729':'Africa','706':'Africa','231':'Africa',
+  '232':'Africa','262':'Africa','024':'Africa','508':'Africa',
+  '834':'Africa','454':'Africa','894':'Africa','716':'Africa',
+  '710':'Africa','516':'Africa','072':'Africa','748':'Africa',
+  '426':'Africa','686':'Africa','324':'Africa','694':'Africa',
+  '288':'Africa','768':'Africa','566':'Africa','120':'Africa',
+  '266':'Africa','178':'Africa','180':'Africa','800':'Africa',
+  '646':'Africa','108':'Africa','404':'Africa','174':'Africa',
+  '384':'Africa','854':'Africa','466':'Africa','478':'Africa',
+  '132':'Africa','624':'Africa','678':'Africa','270':'Africa','204':'Africa',
+  '156':'Asia','356':'Asia','392':'Asia','360':'Asia','586':'Asia',
+  '050':'Asia','792':'Asia','364':'Asia','704':'Asia','764':'Asia',
+  '116':'Asia','418':'Asia','104':'Asia','400':'Asia','760':'Asia',
+  '368':'Asia','682':'Asia','784':'Asia','512':'Asia','887':'Asia',
+  '414':'Asia','634':'Asia','048':'Asia','376':'Asia','422':'Asia',
+  '275':'Asia','031':'Asia','398':'Asia','795':'Asia','762':'Asia',
+  '860':'Asia','417':'Asia','496':'Asia','408':'Asia','410':'Asia',
+  '144':'Asia','524':'Asia','064':'Asia','458':'Asia','096':'Asia',
+  '608':'Asia','702':'Asia','158':'Asia','344':'Asia','446':'Asia',
+  '036':'Australia','554':'Australia','598':'Australia','242':'Australia',
+  '090':'Australia','548':'Australia','520':'Australia','585':'Australia',
+  '584':'Australia','583':'Australia',
+  '010':'Antarctica',
+};
+
+// ════════════════════════════════════════
+// D3 PROJECTION
+// ════════════════════════════════════════
+const SVG_W = 960, SVG_H = 500;
+const svg = d3.select('#map-svg');
+const projection = d3.geoNaturalEarth1().scale(153).translate([SVG_W/2, SVG_H/2]);
+const pathGen = d3.geoPath().projection(projection);
+
+svg.append('path').datum({type:'Sphere'}).attr('class','sphere').attr('d',pathGen);
+svg.append('path').datum(d3.geoGraticule()()).attr('class','graticule').attr('d',pathGen);
+svg.append('path').datum({type:'Sphere'}).attr('class','oval-border').attr('d',pathGen);
+
+// ════════════════════════════════════════
+// DASHBOARD LIVE VALUES — drive the map
+// ════════════════════════════════════════
+const DASH = {
+  bz:         -12.4,   // nT — CRITICAL if <= -10
+  solarWind:  622,     // km/s — Elevated 500-700
+  sScale:     2,       // S2 radiation storm
+  xrayClass:  'M',     // M-class flare
+};
+
+function threatScore(lon, lat) {
+  const bzSeverity   = Math.max(0, Math.min(1, (Math.abs(DASH.bz) - 5) / 15));
+  const swsSeverity  = Math.max(0, Math.min(1, (DASH.solarWind - 400) / 400));
+  const sSeverity    = Math.max(0, Math.min(1, (DASH.sScale - 1) / 4));
+  const xraySeverity = DASH.xrayClass === 'X' ? 1.0 : DASH.xrayClass === 'M' ? 0.6 : DASH.xrayClass === 'C' ? 0.3 : 0.1;
+
+  const latR = lat * Math.PI / 180;
+  const lonR = lon * Math.PI / 180;
+
+  const bzLatPeak  = Math.exp(-((Math.abs(lat) - 65) ** 2) / 300);
+  const bzEquator  = Math.exp(-(lat**2) / 800) * bzSeverity * 0.4;
+  const bzComponent = bzSeverity * (0.7 * bzLatPeak + 0.3 * bzEquator);
+
+  const swsComponent = swsSeverity * (0.5 + 0.5 * Math.exp(-(lat**2)/2000) * Math.cos(lonR));
+
+  const sComponent = sSeverity * Math.exp(-((Math.abs(lat) - 80)**2) / 200);
+
+  const xComponent = xraySeverity * Math.exp(-(lon**2)/3200) * Math.exp(-(lat**2)/1800);
+
+  const raw = 0.40 * bzComponent + 0.25 * swsComponent + 0.20 * sComponent + 0.15 * xComponent;
+  return Math.max(0, Math.min(1, raw));
+}
+
+function threatRGB(t) {
+  t = Math.max(0, Math.min(1, t));
+  let r, g, b;
+  if (t < 0.25) {
+    const u = t / 0.25;
+    r = Math.round(u * 20);
+    g = Math.round(u * 100);
+    b = Math.round(150 + u * 105);
+  } else if (t < 0.5) {
+    const u = (t - 0.25) / 0.25;
+    r = Math.round(20 + u * 20);
+    g = Math.round(100 + u * 155);
+    b = Math.round(255 - u * 210);
+  } else if (t < 0.7) {
+    const u = (t - 0.5) / 0.2;
+    r = Math.round(40 + u * 215);
+    g = Math.round(200 - u * 70);
+    b = Math.round(45 - u * 40);
+  } else if (t < 0.88) {
+    const u = (t - 0.7) / 0.18;
+    r = Math.round(255);
+    g = Math.round(130 - u * 130);
+    b = Math.round(5);
+  } else {
+    const u = (t - 0.88) / 0.12;
+    r = 255;
+    g = Math.round(0);
+    b = Math.round(u * 40);
+  }
+  return [r, g, b];
+}
+
+function jetRGB(t) {
+  t = Math.max(0, Math.min(1, t));
+  let r, g, b;
+  if      (t < 0.125) { r=0; g=0; b=0.5+4*t; }
+  else if (t < 0.375) { r=0; g=4*t-0.5; b=1; }
+  else if (t < 0.625) { r=4*t-1.5; g=1; b=2.5-4*t; }
+  else if (t < 0.875) { r=1; g=3.5-4*t; b=0; }
+  else                { r=4.5-4*t; g=0; b=0; }
+  return [
+    Math.round(Math.max(0,Math.min(1,r))*255),
+    Math.round(Math.max(0,Math.min(1,g))*255),
+    Math.round(Math.max(0,Math.min(1,b))*255),
+  ];
+}
+
+function solarFluxVal(lon, lat) {
+  return 1361 + 29 * Math.exp(-((lon/100)**2 + (lat/60)**2));
+}
+
+function plasmaRGB(t) {
+  t = Math.max(0, Math.min(1, t));
+  const stops = [
+    [0.00,  [  0,   0,   0]],
+    [0.08,  [ 60,   0, 100]],
+    [0.18,  [120,   0, 180]],
+    [0.28,  [  0,   0, 255]],
+    [0.38,  [  0, 100, 255]],
+    [0.48,  [  0, 220, 200]],
+    [0.58,  [  0, 255,   0]],
+    [0.67,  [180, 255,   0]],
+    [0.75,  [255, 255,   0]],
+    [0.83,  [255, 140,   0]],
+    [0.91,  [255,  30,   0]],
+    [0.96,  [255,   0,   0]],
+    [1.00,  [255,  80,  80]],
+  ];
+  let lo = stops[0], hi = stops[stops.length-1];
+  for (let i = 0; i < stops.length-1; i++) {
+    if (t >= stops[i][0] && t <= stops[i+1][0]) { lo = stops[i]; hi = stops[i+1]; break; }
+  }
+  const span = hi[0] - lo[0];
+  const u = span < 0.0001 ? 0 : (t - lo[0]) / span;
+  const s = u * u * (3 - 2*u);
+  return [
+    Math.round(lo[1][0] + s*(hi[1][0]-lo[1][0])),
+    Math.round(lo[1][1] + s*(hi[1][1]-lo[1][1])),
+    Math.round(lo[1][2] + s*(hi[1][2]-lo[1][2])),
+  ];
+}
+
+// ════════════════════════════════════════
+// SMOOTHED HEATMAP
+// ════════════════════════════════════════
+let _heatAnimFrame = null;
+let _heatPhase = 0;
+
+function drawHeatmap(canvasEl, svgEl, phase) {
+  const rect = svgEl.getBoundingClientRect();
+  if (!rect.width) return;
+
+  const CW = Math.round(rect.width);
+  const CH = Math.round(rect.height);
+  canvasEl.width = CW; canvasEl.height = CH;
+
+  const SCALE = 4;
+  const RW = Math.ceil(CW / SCALE);
+  const RH = Math.ceil(CH / SCALE);
+
+  const offCanvas = document.createElement('canvas');
+  offCanvas.width = RW; offCanvas.height = RH;
+  const offCtx = offCanvas.getContext('2d');
+  const imgData = offCtx.createImageData(RW, RH);
+  const data = imgData.data;
+  const vbX=-40, vbY=-20, vbW=1040, vbH=560;
+
+  const pulse = phase !== undefined ? 0.88 + 0.12 * Math.sin(phase) : 1.0;
+
+  for (let py=0; py<RH; py++) {
+    for (let px2=0; px2<RW; px2++) {
+      const svgX = vbX + ((px2+0.5)*SCALE/CW)*vbW;
+      const svgY = vbY + ((py+0.5)*SCALE/CH)*vbH;
+      const lonLat = projection.invert([svgX, svgY]);
+      const idx = (py*RW+px2)*4;
+
+      if (!lonLat || isNaN(lonLat[0])) {
+        data[idx]=0; data[idx+1]=0; data[idx+2]=0; data[idx+3]=0;
+        continue;
+      }
+
+      const [lon, lat] = lonLat;
+      const t = threatScore(lon, lat);
+      let [r, g, b] = plasmaRGB(t);
+
+      if (t > 0.88) {
+        r = Math.round(Math.min(255, r + (255-r)*0.25*Math.sin(phase||0)));
+      }
+
+      data[idx]=r; data[idx+1]=g; data[idx+2]=b; data[idx+3]=248;
+    }
+  }
+  offCtx.putImageData(imgData, 0, 0);
+
+  const ctx = canvasEl.getContext('2d');
+  ctx.clearRect(0,0,CW,CH);
+  ctx.imageSmoothingEnabled = true;
+  ctx.imageSmoothingQuality = 'high';
+  ctx.drawImage(offCanvas, 0, 0, CW, CH);
+
+  const blurCanvas = document.createElement('canvas');
+  blurCanvas.width = CW; blurCanvas.height = CH;
+  const bCtx = blurCanvas.getContext('2d');
+  bCtx.filter = 'blur(8px)';
+  bCtx.drawImage(offCanvas, 0, 0, CW, CH);
+  bCtx.filter = 'none';
+  ctx.globalAlpha = 0.35;
+  ctx.drawImage(blurCanvas, 0, 0);
+  ctx.globalAlpha = 1.0;
+}
+
+function startHeatmapAnimation() {
+  if (_heatAnimFrame) cancelAnimationFrame(_heatAnimFrame);
+  const svgEl = document.getElementById('map-svg');
+  const canvasEl = document.getElementById('heatCanvas');
+  function tick() {
+    _heatPhase += 0.05;
+    drawHeatmap(canvasEl, svgEl, _heatPhase);
+    _heatAnimFrame = requestAnimationFrame(tick);
+  }
+  tick();
+}
+
+// ════════════════════════════════════════
+// COUNTRY NAMES
+// ════════════════════════════════════════
+const countryNames = {
+  '004':'Afghanistan','008':'Albania','012':'Algeria','024':'Angola',
+  '032':'Argentina','036':'Australia','040':'Austria','050':'Bangladesh',
+  '056':'Belgium','068':'Bolivia','076':'Brazil','100':'Bulgaria',
+  '116':'Cambodia','120':'Cameroon','124':'Canada','144':'Sri Lanka',
+  '152':'Chile','156':'China','170':'Colombia','180':'DR Congo',
+  '188':'Costa Rica','191':'Croatia','192':'Cuba','203':'Czech Republic',
+  '208':'Denmark','218':'Ecuador','818':'Egypt','231':'Ethiopia',
+  '246':'Finland','250':'France','276':'Germany','288':'Ghana',
+  '300':'Greece','320':'Guatemala','324':'Guinea','332':'Haiti',
+  '340':'Honduras','356':'India','360':'Indonesia','364':'Iran',
+  '368':'Iraq','372':'Ireland','376':'Israel','380':'Italy',
+  '388':'Jamaica','392':'Japan','400':'Jordan','398':'Kazakhstan',
+  '404':'Kenya','408':'North Korea','410':'South Korea','414':'Kuwait',
+  '418':'Laos','422':'Lebanon','434':'Libya','484':'Mexico',
+  '504':'Morocco','508':'Mozambique','516':'Namibia','524':'Nepal',
+  '528':'Netherlands','554':'New Zealand','566':'Nigeria','578':'Norway',
+  '586':'Pakistan','600':'Paraguay','604':'Peru','608':'Philippines',
+  '616':'Poland','620':'Portugal','642':'Romania','643':'Russia',
+  '682':'Saudi Arabia','686':'Senegal','706':'Somalia','710':'South Africa',
+  '724':'Spain','729':'Sudan','752':'Sweden','756':'Switzerland',
+  '760':'Syria','764':'Thailand','788':'Tunisia','792':'Turkey',
+  '800':'Uganda','804':'Ukraine','784':'UAE','826':'United Kingdom',
+  '840':'United States','858':'Uruguay','860':'Uzbekistan','862':'Venezuela',
+  '704':'Vietnam','887':'Yemen','894':'Zambia','716':'Zimbabwe','010':'Antarctica',
+};
+
+// ════════════════════════════════════════
+// LOAD COUNTRIES & DRAW MAP
+// ════════════════════════════════════════
+fetch('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json')
+  .then(r => r.json())
+  .then(world => {
+    const countries = topojson.feature(world, world.objects.countries);
+    const tooltip = document.getElementById('tooltip');
+
+    svg.selectAll('.country')
+      .data(countries.features).enter().append('path')
+      .attr('class','country')
+      .attr('d', pathGen)
+      .attr('fill', d => {
+        const id = String(d.id).padStart(3,'0');
+        const cont = COUNTRY_CONTINENT[id] || '';
+
+        // ── 5-stop flux colormap: light-green → green → yellow → orange → red
+        function fc(t) {
+          t = Math.max(0, Math.min(1, t));
+          const stops = [
+            [0.00, [210, 245, 210]],  // light green
+            [0.25, [ 60, 190,  60]],  // green
+            [0.50, [255, 215,   0]],  // yellow
+            [0.75, [255, 110,   0]],  // orange
+            [1.00, [205,  10,  10]],  // red
+          ];
+          let lo = stops[0], hi = stops[stops.length-1];
+          for (let i=0; i<stops.length-1; i++) {
+            if (t >= stops[i][0] && t <= stops[i+1][0]) { lo=stops[i]; hi=stops[i+1]; break; }
+          }
+          const sp=hi[0]-lo[0], u=sp<0.0001?0:(t-lo[0])/sp, s=u*u*(3-2*u);
+          return `rgb(${Math.round(lo[1][0]+s*(hi[1][0]-lo[1][0]))},${Math.round(lo[1][1]+s*(hi[1][1]-lo[1][1]))},${Math.round(lo[1][2]+s*(hi[1][2]-lo[1][2]))})`;
+        }
+
+        // ══════════════════════════════════════════════════════
+        // ── ASIA: LIGHT AND DARK GREEN MIX (changed)
+        // ══════════════════════════════════════════════════════
+        if (cont === 'Asia') {
+          const n = +id;
+          // East Asia — dark green (0.22)
+          if ([156,392,410,408].includes(n))            return fc(0.22);
+          // South Asia — medium-dark green (0.18)
+          if ([356,586,050,144,524,064].includes(n))    return fc(0.18);
+          // Southeast Asia — light green (0.10)
+          if ([704,116,418,104,764,458,360,608,702,096].includes(n)) return fc(0.10);
+          // Middle East — dark green (0.26)
+          if ([682,784,400,422,368,760,887,512,634,048,414,376].includes(n)) return fc(0.26);
+          // Central Asia — medium green (0.14)
+          if ([398,860,762,795,417,496].includes(n))    return fc(0.14);
+          // Russia (Asian portion) — light green (0.08)
+          if (n === 643)                                 return fc(0.08);
+          return fc(0.16); // fallback Asia — light green
+        }
+
+        // ─── EUROPE: orange band (0.65–0.72)
+        if (cont === 'Europe') {
+          const n = +id;
+          if ([724,380,300,620,470,191,705,703,688].includes(n)) return fc(0.72);
+          if ([250,276,826,056,528,756,040,208,752,578,246].includes(n)) return fc(0.66);
+          return fc(0.61);
+        }
+
+        // ─── AFRICA: orange-yellow (N→S gradient)
+        if (cont === 'Africa') {
+          const n = +id;
+          if ([012,818,504,788,434,729].includes(n)) return fc(0.70);
+          if ([566,288,324,384,120,178,180,800].includes(n)) return fc(0.58);
+          if ([231,706,404,646,108,800,508,834].includes(n)) return fc(0.52);
+          return fc(0.44);
+        }
+
+        // ══════════════════════════════════════════════════════
+        // ── NORTH AMERICA: INTENSE RED (changed)
+        // ══════════════════════════════════════════════════════
+        if (cont === 'North America') {
+          const n = +id;
+          if (n === 124) return fc(0.88);  // Canada — deep red
+          if (n === 840) return fc(0.96);  // USA — intense CRITICAL red
+          return fc(0.92);                  // Central America / Caribbean — very high red
+        }
+
+        // ─── SOUTH AMERICA: green to yellow
+        if (cont === 'South America') {
+          const n = +id;
+          if ([076,032].includes(n)) return fc(0.36);
+          if ([604,170,218].includes(n)) return fc(0.30);
+          return fc(0.33);
+        }
+
+        // ─── AUSTRALIA: light green (lowest flux)
+        if (cont === 'Australia') {
+          const n = +id;
+          if (n === 036) return fc(0.16);
+          return fc(0.20);
+        }
+
+        // ─── ANTARCTICA: palest green
+        if (cont === 'Antarctica') return fc(0.05);
+
+        return fc(0.25);
+      })
+      .attr('stroke', '#ffffff')
+      .attr('stroke-width', '0.8')
+      .on('mousemove', function(event, d) {
+        const id = String(d.id).padStart(3,'0');
+        const centroid = pathGen.centroid(d);
+        const lonLat = projection.invert(centroid);
+        const t = lonLat ? threatScore(lonLat[0], lonLat[1]) : 0;
+        const level = t > 0.88 ? '🔴 Critical Threat' : t > 0.7 ? '🟠 Normal' : t > 0.5 ? '🟡 Normal' : t > 0.3 ? '🟢 Low Threat' : '🟢 Low Threat';
+        tooltip.style.display='block';
+        tooltip.style.left=(event.clientX+14)+'px';
+        tooltip.style.top=(event.clientY-40)+'px';
+        tooltip.innerHTML=`<strong>${countryNames[id]||'Unknown'}</strong><br><span style="font-size:0.75rem;">${COUNTRY_CONTINENT[id]||'—'}</span><br><span style="font-size:0.72rem;">${level}</span>`;
+      })
+      .on('mouseleave', () => tooltip.style.display='none');
+
+    svg.append('path').datum({type:'Sphere'}).attr('class','oval-border').attr('d',pathGen);
+
+    // Longitude ticks
+    const lonTicks = [-180,-120,-60,0,60,120,180];
+    lonTicks.forEach(lon => {
+      const [px] = projection([lon, -90]);
+      svg.append('line').attr('x1',px).attr('y1',SVG_H+2).attr('x2',px).attr('y2',SVG_H+8).attr('stroke','#555').attr('stroke-width','1');
+      svg.append('text').attr('x',px).attr('y',SVG_H+18).attr('text-anchor','middle').attr('font-size','11').attr('font-family','Courier New').attr('fill','#444').text(lon+'°');
+    });
+    svg.append('text').attr('x',SVG_W/2).attr('y',SVG_H+34).attr('text-anchor','middle').attr('font-size','12').attr('font-family','Courier New').attr('font-weight','bold').attr('fill','#444').text('Longitude');
+
+    // Latitude ticks
+    const latTicks = [-90,-60,-30,0,30,60,90];
+    latTicks.forEach(lat => {
+      const [,py] = projection([-180, lat]);
+      svg.append('line').attr('x1',-8).attr('y1',py).attr('x2',-2).attr('y2',py).attr('stroke','#555').attr('stroke-width','1');
+      svg.append('text').attr('x',-10).attr('y',py+4).attr('text-anchor','end').attr('font-size','11').attr('font-family','Courier New').attr('fill','#444').text(lat+'°');
+    });
+    svg.append('text').attr('transform',`translate(-32,${SVG_H/2}) rotate(-90)`).attr('text-anchor','middle').attr('font-size','12').attr('font-family','Courier New').attr('font-weight','bold').attr('fill','#444').text('Latitude');
+
+    // ══════════════════════════════════════════════
+    // STORM IMPACT ZONE ANNOTATIONS ON THE MAP
+    // ══════════════════════════════════════════════
+    const stormAnnotations = [
+      { lon: 20,  lat: 67,  label: '⚡ AURORAL STORM ZONE', sub: 'Bz -12.4 nT CRITICAL', color: '#ff2200' },
+      { lon: 30, lat: -68, label: '⚡ SOUTHERN AURORA', sub: 'Geomagnetic Disruption', color: '#ff4400' },
+      { lon: 10,  lat: 10,  label: '☀ IONOSPHERIC ABSORPTION', sub: 'M-class Flare — D-Layer', color: '#ffaa00' },
+      { lon: -10, lat: 82, label: '☢ POLAR CAP ABSORPTION', sub: 'S2 Radiation Storm', color: '#cc00ff' },
+    ];
+
+    stormAnnotations.forEach(ann => {
+      const [px, py] = projection([ann.lon, ann.lat]);
+      if (!px || isNaN(px)) return;
+
+      const g_ann = svg.append('g').attr('class','storm-marker').attr('transform',`translate(${px},${py})`);
+
+      g_ann.append('circle')
+        .attr('r', 14).attr('fill','none')
+        .attr('stroke', ann.color).attr('stroke-width','1.5')
+        .attr('opacity','0.7')
+        .attr('stroke-dasharray','4,2');
+
+      g_ann.append('circle')
+        .attr('r', 4)
+        .attr('fill', ann.color)
+        .attr('opacity','0.9');
+
+      const labelX = ann.lon > 100 ? -160 : 18;
+      const textW = 150;
+      g_ann.append('rect')
+        .attr('x', labelX - 3).attr('y', -20)
+        .attr('width', textW).attr('height', 34)
+        .attr('rx', 3).attr('ry', 3)
+        .attr('fill', 'rgba(0,0,0,0.72)')
+        .attr('stroke', ann.color).attr('stroke-width','0.8');
+
+      g_ann.append('text')
+        .attr('x', labelX + 3).attr('y', -7)
+        .attr('font-family','Courier New').attr('font-size','8.5')
+        .attr('font-weight','bold').attr('fill', ann.color)
+        .text(ann.label);
+
+      g_ann.append('text')
+        .attr('x', labelX + 3).attr('y', 8)
+        .attr('font-family','Courier New').attr('font-size','7.5')
+        .attr('fill','rgba(255,255,255,0.85)')
+        .text(ann.sub);
+
+      g_ann.append('line')
+        .attr('x1', ann.lon > 100 ? -1 : 1).attr('y1','0')
+        .attr('x2', labelX + (ann.lon > 100 ? textW : 0)).attr('y2','0')
+        .attr('stroke', ann.color).attr('stroke-width','0.8').attr('opacity','0.6');
+    });
+
+    // ══════════════════════════════════════════════
+    // INCOMING SOLAR FLUX ARROWS near each continent
+    // ══════════════════════════════════════════════
+    const fluxArrows = [
+      { from:[170, 30], to:[140, 35],  flux:'1389 W/m²', color:'#cc0000', width:2.5, label:'Asia (East)' },
+      { from:[ 95,-10], to:[ 90, 20],  flux:'1381 W/m²', color:'#dd2200', width:2.2, label:'Asia (South)' },
+      { from:[ 55, 55], to:[ 65, 45],  flux:'1374 W/m²', color:'#ee5500', width:1.9, label:'C. Asia' },
+      { from:[  5, 65], to:[ 15, 55],  flux:'1370 W/m²', color:'#ff7700', width:1.7, label:'Europe' },
+      { from:[-18, 20], to:[  8, 15],  flux:'1366 W/m²', color:'#ffaa00', width:1.5, label:'Africa' },
+      { from:[-115, 60], to:[-100,50], flux:'1363 W/m²', color:'#ccdd00', width:1.4, label:'N. America' },
+      { from:[-85, -35], to:[-65,-20], flux:'1362 W/m²', color:'#66cc44', width:1.3, label:'S. America' },
+      { from:[160, -30], to:[145,-28], flux:'1361 W/m²', color:'#44bb44', width:1.2, label:'Australia' },
+    ];
+
+    const defs = svg.append('defs');
+    fluxArrows.forEach((fa, i) => {
+      defs.append('marker')
+        .attr('id', `farrow${i}`)
+        .attr('viewBox','0 0 10 10')
+        .attr('refX','8').attr('refY','5')
+        .attr('markerWidth','6').attr('markerHeight','6')
+        .attr('orient','auto')
+        .append('path').attr('d','M 0 0 L 10 5 L 0 10 z')
+        .attr('fill', fa.color);
+    });
+
+    fluxArrows.forEach((fa, i) => {
+      const p1 = projection(fa.from);
+      const p2 = projection(fa.to);
+      if (!p1||!p2||isNaN(p1[0])||isNaN(p2[0])) return;
+      const [x1,y1]=p1, [x2,y2]=p2;
+
+      const g_fa = svg.append('g');
+
+      g_fa.append('line')
+        .attr('x1',x1).attr('y1',y1).attr('x2',x2).attr('y2',y2)
+        .attr('stroke', fa.color).attr('stroke-width', fa.width+3)
+        .attr('opacity','0.20').attr('stroke-linecap','round');
+
+      g_fa.append('line')
+        .attr('x1',x1).attr('y1',y1).attr('x2',x2).attr('y2',y2)
+        .attr('stroke', fa.color).attr('stroke-width', fa.width)
+        .attr('marker-end',`url(#farrow${i})`)
+        .attr('opacity','0.92').attr('stroke-linecap','round');
+
+      const lblW = 74, lblH = 24;
+      const lx = x1 - lblW/2, ly = y1 - lblH - 3;
+
+      g_fa.append('rect')
+        .attr('x', lx).attr('y', ly)
+        .attr('width', lblW).attr('height', lblH)
+        .attr('rx',4).attr('ry',4)
+        .attr('fill','rgba(255,255,255,0.93)')
+        .attr('stroke', fa.color).attr('stroke-width','1.2');
+
+      g_fa.append('text')
+        .attr('x', lx + lblW/2).attr('y', ly + 9)
+        .attr('text-anchor','middle')
+        .attr('font-family','Courier New').attr('font-size','7.8')
+        .attr('font-weight','bold').attr('fill', fa.color)
+        .text(`☀ ${fa.flux}`);
+
+      g_fa.append('text')
+        .attr('x', lx + lblW/2).attr('y', ly + 19)
+        .attr('text-anchor','middle')
+        .attr('font-family','Courier New').attr('font-size','6.5')
+        .attr('fill','#555')
+        .text(fa.label);
+    });
+
+    const legendEl = document.getElementById('legend');
+    const fluxSteps = [
+      ['Low Threat',    '#c8f0c8'],
+      ['',              '#90d890'],
+      ['Low Threat',    '#38b438'],
+      ['',              '#a0cc00'],
+      ['Normal',        '#ffe600'],
+      ['',              '#ffaa00'],
+      ['Normal',        '#ff8200'],
+      ['',              '#ff4400'],
+      ['Critical Threat', '#dc1414'],
+    ];
+    fluxSteps.forEach(([name, color]) => {
+      legendEl.innerHTML += `<div class="legend-item"><div class="legend-swatch" style="background:${color};width:16px;height:16px;border-radius:2px;border:1px solid rgba(0,0,0,0.15);"></div>${name?`<span style="color:#333;">${name}</span>`:''}</div>`;
+    });
+
+    // Colorbar
+    const cbEl=document.getElementById('colorbarCanvas');
+    const cbCtx=cbEl.getContext('2d');
+    for (let i=0;i<280;i++) {
+      const t = i/279;
+      const cStops = [[0,[200,240,200]],[0.25,[56,180,56]],[0.5,[255,230,0]],[0.75,[255,130,0]],[1,[220,20,20]]];
+      let lo=cStops[0], hi=cStops[cStops.length-1];
+      for(let k=0;k<cStops.length-1;k++){if(t>=cStops[k][0]&&t<=cStops[k+1][0]){lo=cStops[k];hi=cStops[k+1];break;}}
+      const sp=hi[0]-lo[0]; const u=sp<0.0001?0:(t-lo[0])/sp; const s=u*u*(3-2*u);
+      const r=Math.round(lo[1][0]+s*(hi[1][0]-lo[1][0]));
+      const g=Math.round(lo[1][1]+s*(hi[1][1]-lo[1][1]));
+      const b=Math.round(lo[1][2]+s*(hi[1][2]-lo[1][2]));
+      cbCtx.fillStyle=`rgb(${r},${g},${b})`; cbCtx.fillRect(i,0,1,14);
+    }
+
+    requestAnimationFrame(() => startHeatmapAnimation());
+  })
+  .catch(() => {
+    svg.append('text').attr('x',SVG_W/2).attr('y',SVG_H/2).attr('text-anchor','middle').attr('fill','#7a3a1a').attr('font-size','14px').text('Network required to load map');
+    requestAnimationFrame(() => startHeatmapAnimation());
+  });
+
+window.addEventListener('resize', () => {
+  requestAnimationFrame(() => startHeatmapAnimation());
+});
+
+// ════════════════════════════════════════
+// THREAT AREA CHART — Lat × Lon ridgeline
+// ════════════════════════════════════════
+const GW=230, GH=480;
+const gP={top:24,right:18,bottom:46,left:48};
+const gPW=GW-gP.left-gP.right;
+const gPH=GH-gP.top-gP.bottom;
+
+const gc=document.getElementById('graphCanvas');
+gc.width=GW; gc.height=GH;
+const g=gc.getContext('2d');
+
+g.fillStyle='#000'; g.fillRect(0,0,GW,GH);
+g.fillStyle='#050505'; g.fillRect(gP.left,gP.top,gPW,gPH);
+
+const LON_MIN=-180, LON_MAX=180, LAT_MIN=-90, LAT_MAX=90;
+
+function gx(lon){return gP.left+((lon-LON_MIN)/(LON_MAX-LON_MIN))*gPW;}
+function gy(lat){return gP.top+gPH-((lat-LAT_MIN)/(LAT_MAX-LAT_MIN))*gPH;}
+
+g.setLineDash([2,4]); g.lineWidth=0.5;
+[-180,-120,-60,0,60,120,180].forEach(lon=>{
+  const x=gx(lon); g.strokeStyle='rgba(255,255,255,0.10)';
+  g.beginPath(); g.moveTo(x,gP.top); g.lineTo(x,gP.top+gPH); g.stroke();
+});
+[-90,-60,-30,0,30,60,90].forEach(lat=>{
+  const y=gy(lat); g.strokeStyle='rgba(255,255,255,0.08)';
+  g.beginPath(); g.moveTo(gP.left,y); g.lineTo(gP.left+gPW,y); g.stroke();
+});
+g.setLineDash([]);
+
+const latLinesG=[];
+for(let lat=-90;lat<=90;lat+=6) latLinesG.push(lat);
+const ampScaleG=2.2;
+
+latLinesG.forEach(lat=>{
+  const baseY=gy(lat);
+  const lons=[]; for(let lon=-180;lon<=180;lon+=3) lons.push(lon);
+  g.beginPath(); g.moveTo(gx(-180),baseY);
+  lons.forEach(lon=>{
+    const t=threatScore(lon,lat);
+    const rise=t*22*ampScaleG;
+    g.lineTo(gx(lon),baseY-rise);
+  });
+  g.lineTo(gx(180),baseY); g.closePath();
+  const midT=threatScore(0,lat);
+  const [r,gg,b]=plasmaRGB(midT);
+  g.fillStyle=`rgba(${r},${gg},${b},0.55)`; g.fill();
+  g.beginPath();
+  lons.forEach((lon,i)=>{
+    const t=threatScore(lon,lat);
+    const rise=t*22*ampScaleG;
+    i===0?g.moveTo(gx(lon),baseY-rise):g.lineTo(gx(lon),baseY-rise);
+  });
+  g.strokeStyle=`rgba(${r},${gg},${b},0.9)`; g.lineWidth=1.2; g.lineJoin='round'; g.stroke();
+});
+
+const cbXG=gP.left+gPW+6, cbHG=gPH, cbWG=10;
+for(let py2=0;py2<cbHG;py2++){
+  const t=1-py2/cbHG;
+  const [r,gg,b]=plasmaRGB(t);
+  g.fillStyle=`rgb(${r},${gg},${b})`; g.fillRect(cbXG,gP.top+py2,cbWG,1);
+}
+g.font='6.5px Courier New'; g.fillStyle='#ccc'; g.textAlign='left';
+[['1.0','Crit'],['0.8','Nrml'],['0.5','Nrml'],['0.25','Low'],['0.0','Low']].forEach(([val,lbl])=>{
+  const t=parseFloat(val);
+  const cy=gP.top+gPH-t*gPH;
+  g.fillText(lbl,cbXG+cbWG+2,cy+3);
+});
+g.save(); g.translate(GW-2,gP.top+gPH/2); g.rotate(Math.PI/2); g.textAlign='center'; g.fillStyle='#aaa'; g.font='7px Courier New'; g.fillText('Threat',0,0); g.restore();
+
+g.font='8px Courier New'; g.fillStyle='#ccc'; g.textAlign='center';
+[-180,-120,-60,0,60,120,180].forEach(lon=>{
+  const x=gx(lon); g.strokeStyle='#666'; g.lineWidth=0.8;
+  g.beginPath(); g.moveTo(x,gP.top+gPH); g.lineTo(x,gP.top+gPH+4); g.stroke();
+  g.fillText(lon+'°',x,gP.top+gPH+14);
+});
+g.fillStyle='#aaa'; g.font='9px Courier New';
+g.fillText('Longitude',gP.left+gPW/2,GH-5);
+
+g.textAlign='right'; g.font='8px Courier New';
+[-90,-60,-30,0,30,60,90].forEach(lat=>{
+  const y=gy(lat); g.strokeStyle='#666'; g.lineWidth=0.8;
+  g.beginPath(); g.moveTo(gP.left-4,y); g.lineTo(gP.left,y); g.stroke();
+  g.fillStyle='#ccc'; g.fillText(lat+'°',gP.left-6,y+3);
+});
+g.save(); g.translate(11,gP.top+gPH/2); g.rotate(-Math.PI/2); g.textAlign='center'; g.fillStyle='#aaa'; g.font='9px Courier New'; g.fillText('Latitude',0,0); g.restore();
+
+g.fillStyle='#ff4444'; g.font='bold 8px Courier New'; g.textAlign='center';
+g.fillText('▲ THREAT LEVEL',gP.left+gPW/2,gP.top-7);
+
+g.strokeStyle='#dc2626'; g.lineWidth=1.4;
+g.beginPath(); g.moveTo(gP.left,gP.top); g.lineTo(gP.left,gP.top+gPH); g.stroke();
+g.beginPath(); g.moveTo(gP.left,gP.top+gPH); g.lineTo(gP.left+gPW,gP.top+gPH); g.stroke();
+g.strokeStyle='#440000'; g.lineWidth=1;
+g.beginPath(); g.moveTo(gP.left+gPW,gP.top); g.lineTo(gP.left+gPW,gP.top+gPH); g.stroke();
+g.beginPath(); g.moveTo(gP.left,gP.top); g.lineTo(gP.left+gPW,gP.top); g.stroke();
+
+</script>
+
+<!-- Chart.js for panel graphs -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script>
+(function initPanelCharts() {
+  const labels = ['T-9','T-8','T-7','T-6','T-5','T-4','T-3','T-2','T-1','Now'];
+  const base = {
+    responsive: true, maintainAspectRatio: false, animation: false,
+    plugins: { legend: { display: false } },
+    scales: {
+      x: { grid: { color: 'rgba(0,0,0,0.05)' }, ticks: { font: { size: 9 }, color: '#999' } },
+      y: { grid: { color: 'rgba(0,0,0,0.05)' }, ticks: { font: { size: 9 }, color: '#999' } }
+    }
+  };
+
+  // Bz — red line, fill danger zone below -10
+  new Chart(document.getElementById('panelBzChart'), {
+    type: 'line',
+    data: {
+      labels,
+      datasets: [
+        { data: [-2,-3,-5,-7,-10,-11,-12,-13,-12.5,-12.4], borderColor: '#dc2626', backgroundColor: 'rgba(220,38,38,0.13)', fill: true, tension: 0.4, pointRadius: 3, pointBackgroundColor: '#dc2626', borderWidth: 2 }
+      ]
+    },
+    options: { ...base, scales: { x: base.scales.x, y: { ...base.scales.y, suggestedMin: -16, suggestedMax: 3 } } }
+  });
+
+  // Solar Wind Speed — amber line
+  new Chart(document.getElementById('panelWindChart'), {
+    type: 'line',
+    data: {
+      labels,
+      datasets: [
+        { data: [430,455,480,510,550,580,600,615,620,622], borderColor: '#d97706', backgroundColor: 'rgba(217,119,6,0.07)', fill: false, tension: 0.4, pointRadius: 3, pointBackgroundColor: '#d97706', borderWidth: 2 }
+      ]
+    },
+    options: { ...base, scales: { x: base.scales.x, y: { ...base.scales.y, suggestedMin: 400, suggestedMax: 700 } } }
+  });
+
+  // Solar Wind Density — blue bars
+  new Chart(document.getElementById('panelDensityChart'), {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [
+        { data: [4.2,5.1,6.8,7.5,9.2,10.4,11.0,11.8,12.0,12.1], backgroundColor: 'rgba(37,99,235,0.72)', borderColor: '#2563eb', borderWidth: 1, borderRadius: 3 }
+      ]
+    },
+    options: { ...base, scales: { x: base.scales.x, y: { ...base.scales.y, suggestedMin: 0 } } }
+  });
+
+  // Radiation Hazard (Proton Flux) — red line with fill
+  new Chart(document.getElementById('panelProtonChart'), {
+    type: 'line',
+    data: {
+      labels,
+      datasets: [
+        { data: [1,1.2,2,3.5,5,7,9,11,12,12.5], borderColor: '#dc2626', backgroundColor: 'rgba(220,38,38,0.10)', fill: true, tension: 0.4, pointRadius: 3, pointBackgroundColor: '#dc2626', borderWidth: 2 }
+      ]
+    },
+    options: { ...base, scales: { x: base.scales.x, y: { ...base.scales.y, suggestedMin: 0 } } }
+  });
+
+  // Solar X-ray Flux — amber log scale line
+  new Chart(document.getElementById('panelXrayChart'), {
+    type: 'line',
+    data: {
+      labels,
+      datasets: [
+        { data: [1e-7,2e-7,5e-7,1e-6,3e-6,7e-6,1.5e-5,2e-5,2.2e-5,2e-5], borderColor: '#f59e0b', backgroundColor: 'rgba(245,158,11,0.07)', fill: false, tension: 0.4, pointRadius: 3, pointBackgroundColor: '#f59e0b', borderWidth: 2 }
+      ]
+    },
+    options: {
+      ...base,
+      scales: {
+        x: base.scales.x,
+        y: { type: 'logarithmic', min: 1e-8, max: 1e-3, ticks: { font: { size: 8 }, color: '#999', callback: v => v===1e-7?'C':v===1e-6?'M':v===1e-4?'X':'' }, grid: { color: 'rgba(0,0,0,0.05)' } }
+      }
+    }
+  });
+})();
+</script>
+</body>
+</html>
